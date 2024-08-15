@@ -1,0 +1,13 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+<h2>Your Profile</h2>
+<p><strong>Username:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<p><strong>First Name:</strong> {{ user.first_name }}</p>
+<p><strong>Last Name:</strong> {{ user.last_name }}</p>
+
+<a href="{% url 'user:update_profile' %}" class="btn btn-primary">Update Profile</a>
+<a href="{% url 'user:change_password' %}" class="btn btn-secondary">Change Password</a>
+<a href="{% url 'user:delete_account' %}" class="btn btn-danger">Delete Profile</a>
+{% endblock %}

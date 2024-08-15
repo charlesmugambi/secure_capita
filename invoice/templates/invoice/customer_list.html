@@ -1,0 +1,58 @@
+<html>
+    {% extends 'user/base.html' %}
+
+    {% block content %}
+    <div class="container">
+        <h5>Customer Records</h5>
+        <br>
+        
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-striped">
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Customer Type</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if customer_records %}
+                        {% for customer_record in customer_records %}
+                            <tr>
+                                <td>{{ customer_record.id }}</td>
+                                <td>{{ customer_record.name }}</td>
+                                <td>{{ customer_record.email }}</td>
+                                <td>{{ customer_record.phone }}</td>
+                                <td>{{ customer_record.address }}</td>
+                                <td>
+                                    {% if customer_record.status == 'Active' %}
+                                        <span class="badge rounded-pill text-bg-success">{{ customer_record.status }}</span>
+                                    {% elif customer_record.status == 'Inactive' %}
+                                        <span class="badge rounded-pill text-bg-warning">{{ customer_record.status }}</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill text-bg-primary">{{ customer_record.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ customer_record.customer_type }}</td>
+                                <td>
+                                    <td><a href="{% url 'invoice:delete_customer' customer.id %}" class="btn btn-danger btn-sm">Delete</a></td>
+                                    <a href="{% url 'invoice:update_customer' customer_record.id %}">Update</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center">No customer records found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endblock %}
+</html>

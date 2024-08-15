@@ -1,0 +1,62 @@
+<html>
+    {% extends 'user/base.html' %}
+
+{% block content %}
+
+    {% block invoice %}
+        <h5>
+            Invoice Records
+        </h5>
+
+
+        <br>
+
+        <table class="table table-striped table-hover">
+
+            <thead class="table-striped">
+            <tr>
+                <th scope="col">Invoice Number</th>
+                <th scope="col">Invoice Date</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Status</th>
+                <th scope="col">Total Amount</th>
+                <th scope="col">Action</th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+                
+                {% if customer_records  %}
+                    {% for customer_record in customer_records  %}   
+
+                    
+                    <tr>
+                        <td>{{ invoice.invoice_number }}</td>
+                        <td>{{ invoice.invoice_date }}</td>
+                        <td>{{ invoice.due_date }}</td>
+                        <td>
+                            {% if customer_record.status == 'Active' %}
+                                <span class="badge rounded-pill text-bg-success">{{ customer_record.status }}</span>
+                            {% elif customer_record.status == 'Inactive' %}
+                                <span class="badge rounded-pill text-bg-warning">{{ customer_record.status }}</span>
+                            {% else %}
+                                <span class="badge rounded-pill text-bg-primary">{{ customer_record.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ invoice.total_after_discount }}</td>      
+
+                        
+                        <td>{{ customer_record.customer_type }}</td>
+                        <td><a href="{% url 'invoice:update_invoice' invoice.id %}">Update Invoice</a></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+   
+    {% endblock %}
+</html>
+{% endblock %}
+    
+   

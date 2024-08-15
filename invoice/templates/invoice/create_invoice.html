@@ -1,0 +1,91 @@
+{% extends 'user/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="container bg-light shadow-md p-5 form-layout">
+        <h3>Create a New Invoice</h3>
+        <br><br>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ invoice_form.due_date }}
+            {{ invoice_form.recipient_choice }}
+
+            <div id="customer-selection" style="display: none;">
+                {{ invoice_form.customer }}
+            </div>
+            <div id="user-selection" style="display: none;">
+                {{ invoice_form.recipient_user }}
+            </div>
+
+            {{ invoice_form.discount }}
+            {{ invoice_form.status }}
+
+            <!-- Invoice Items Formset -->
+            <div id="invoice-items">
+                {{ formset.management_form }}
+                {% for form in formset %}
+                    <div class="formset-item">
+                        {{ form|crispy }}
+                        <button type="button" class="remove-item btn btn-danger btn-sm">Remove</button>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="button" id="add-item" class="btn btn-secondary">Add Item</button>
+            <button type="submit" class="btn btn-primary">Send Invoice</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clone the first formset item to use as a template for new items
+            var formTemplate = document.querySelector('#invoice-items .formset-item');
+            if (formTemplate) {
+                formTemplate = formTemplate.cloneNode(true);
+                formTemplate.querySelector('.remove-item').style.display = 'none'; // Hide the remove button on the template
+                var totalForms = document.querySelector('#id_items-TOTAL_FORMS');
+
+                document.getElementById('add-item').addEventListener('click', function() {
+                    var newForm = formTemplate.cloneNode(true);
+                    var formCount = parseInt(totalForms.value);
+                    
+                    newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, formCount);
+                    totalForms.value = formCount + 1;
+
+                    document.getElementById('invoice-items').appendChild(newForm);
+                    newForm.querySelector('.remove-item').style.display = 'block'; // Show remove button on new items
+                });
+
+                document.addEventListener('click', function(event) {
+                    if (event.target.classList.contains('remove-item')) {
+                        var item = event.target.closest('.formset-item');
+                        item.remove();
+
+                        // Update the total forms count
+                        var formCount = document.querySelectorAll('.formset-item').length;
+                        totalForms.value = formCount;
+                    }
+                });
+            }
+
+            document.querySelectorAll('input[name="recipient_choice"]').forEach((input) => {
+                input.addEventListener('change', function() {
+                    if (this.value === 'customer') {
+                        document.getElementById('customer-selection').style.display = 'block';
+                        document.getElementById('user-selection').style.display = 'none';
+                    } else {
+                        document.getElementById('customer-selection').style.display = 'none';
+                        document.getElementById('user-selection').style.display = 'block';
+                    }
+                });
+            });
+
+            // Trigger change event on page load to set the correct field visibility
+            var selectedRecipient = document.querySelector('input[name="recipient_choice"]:checked');
+            if (selectedRecipient) {
+                selectedRecipient.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+{% endblock %}
